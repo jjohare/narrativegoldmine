@@ -1,80 +1,73 @@
-/**
- * simple_model_01.js, By Wayne Brown, Spring 2016
- */
+const canvas = document.getElementById('webgl-canvas');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-/**
- * The MIT License (MIT)
- *
- * Copyright (c) 2015 C. Wayne Brown
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+const gl = canvas.getContext('webgl');
 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+gl.clearColor(0.5, 1.0, 0.5, 1.0);
+gl.clear(gl.COLOR_BUFFER_BIT);
 
-"use strict";
+gl.viewport(0, 0, canvas.width, canvas.height);
 
-//-------------------------------------------------------------------------
-/**
- * A simple triangle composed of 3 vertices.
- * @param vertices Array An array of 3 vertices.
- * @constructor
-  */
-window.Triangle = function (vertices) {
-  var self = this;
-  self.vertices = vertices;
-};
+const vertexShaderSource = `
+  attribute vec4 coordinates;
+  void main() {
+    gl_Position = coordinates;
+  }
+`;
 
-//-------------------------------------------------------------------------
-/**
- * A simple model composed of an array of triangles.
- * @param name String The name of the model.
- * @constructor
- */
-window.SimpleModel = function (name) {
-  var self = this;
-  self.name = name;
-  self.triangles = [];
-};
+const fragmentShaderSource = `
+  precision mediump float;
+  void main() {
+    gl_FragColor = vec4(0.3, 0.3, 0.3, 1.0);
+  }
+`;
 
-//-------------------------------------------------------------------------
-/**
- * Create a Simple_model of 4 triangles that forms a pyramid.
- * @return SimpleModel
- */
-window.CreatePyramid = function () {
-  var vertices, triangle1, triangle2, triangle3, triangle4;
+const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(vertexShader, vertexShaderSource);
+gl.compileShader(vertexShader);
 
-  // Vertex data
-  vertices = [  [ 0.0, -0.25, -0.50],
-                [ 0.0,  0.25,  0.00],
-                [ 0.5, -0.25,  0.25],
-                [-0.5, -0.25,  0.25] ];
+const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+gl.shaderSource(fragmentShader, fragmentShaderSource);
+gl.compileShader(fragmentShader);
 
-  // Create 4 triangles
-  triangle1 = new Triangle([vertices[2], vertices[1], vertices[3]]);
-  triangle2 = new Triangle([vertices[3], vertices[1], vertices[0]]);
-  triangle3 = new Triangle([vertices[0], vertices[1], vertices[2]]);
-  triangle4 = new Triangle([vertices[0], vertices[2], vertices[3]]);
+const shaderProgram = gl.createProgram();
+gl.attachShader(shaderProgram, vertexShader);
+gl.attachShader(shaderProgram, fragmentShader);
+gl.linkProgram(shaderProgram);
 
-  // Create a model that is composed of 4 triangles
-  var model = new SimpleModel("simple");
-  model.triangles = [ triangle1, triangle2, triangle3, triangle4 ];
+gl.useProgram(shaderProgram);
 
-  return model;
-};
+const vertices = [
+  0.0, -0.25, -0.50,
+  0.0,  0.25,  0.00,
+  0.5, -0.25,  0.25,
+  -0.5, -0.25,  0.25
+];
 
+const indices = [
+  2, 1, 3,
+  3, 1, 0,
+  0, 1, 2,
+  0, 2, 3
+];
+
+const vertexBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+const indexBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+const coordinates = gl.getAttribLocation(shaderProgram, 'coordinates');
+gl.vertexAttribPointer(coordinates, 3, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(coordinates);
+
+function animate() {
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+  requestAnimationFrame(animate);
+}
+
+animate();

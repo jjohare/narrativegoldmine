@@ -1,39 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebGL Landing Page</title>
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-color: #8fd694; /* Pale green background */
-        }
-        #webglCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 1000;
-            height: 1000;
-        }
-        h1 {
-            position: absolute;
-            top: 50;
-            left: 50;
-            transform: translate(-50, -50);
-            font-family: Arial, sans-serif;
-            font-size: 2em;
-            color: white;
-            pointer-events: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Rotating Pyramid</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
 </head>
 <body>
-    <h1>NARRATIVE GOLDMINE</h1>
-    <canvas id="webglCanvas"></canvas>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.js"></script>
-    <script src="webgl.js"></script>
+  <canvas id="webgl-canvas"></canvas>
+  <script src="webgl.js"></script>
 </body>
 </html>
