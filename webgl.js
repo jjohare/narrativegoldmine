@@ -1,112 +1,80 @@
-// A helper function to create a WebGL context
-function createContext(canvas) {
-  const context = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-  if (!context) {
-    throw new Error('WebGL not supported');
-  }
-  return context;
-}
+/**
+ * simple_model_01.js, By Wayne Brown, Spring 2016
+ */
 
-// A helper function to create a WebGL shader
-function createShader(gl, type, source) {
-  const shader = gl.createShader(type);
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 C. Wayne Brown
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
 
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    throw new Error('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
-  }
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
-  return shader;
-}
+"use strict";
 
-// A helper function to create a WebGL program
-function createProgram(gl, vertexShader, fragmentShader) {
-  const program = gl.createProgram();
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
+//-------------------------------------------------------------------------
+/**
+ * A simple triangle composed of 3 vertices.
+ * @param vertices Array An array of 3 vertices.
+ * @constructor
+  */
+window.Triangle = function (vertices) {
+  var self = this;
+  self.vertices = vertices;
+};
 
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    throw new Error('Unable to initialize the shader program: ' + gl.getProgramInfoLog(program));
-  }
+//-------------------------------------------------------------------------
+/**
+ * A simple model composed of an array of triangles.
+ * @param name String The name of the model.
+ * @constructor
+ */
+window.SimpleModel = function (name) {
+  var self = this;
+  self.name = name;
+  self.triangles = [];
+};
 
-  return program;
-}
+//-------------------------------------------------------------------------
+/**
+ * Create a Simple_model of 4 triangles that forms a pyramid.
+ * @return SimpleModel
+ */
+window.CreatePyramid = function () {
+  var vertices, triangle1, triangle2, triangle3, triangle4;
 
-const canvas = document.getElementById('webgl-canvas');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+  // Vertex data
+  vertices = [  [ 0.0, -0.25, -0.50],
+                [ 0.0,  0.25,  0.00],
+                [ 0.5, -0.25,  0.25],
+                [-0.5, -0.25,  0.25] ];
 
-const gl = createContext(canvas);
-gl.clearColor(0.5, 1.0, 0.5, 1.0);
-gl.enable(gl.DEPTH_TEST);
+  // Create 4 triangles
+  triangle1 = new Triangle([vertices[2], vertices[1], vertices[3]]);
+  triangle2 = new Triangle([vertices[3], vertices[1], vertices[0]]);
+  triangle3 = new Triangle([vertices[0], vertices[1], vertices[2]]);
+  triangle4 = new Triangle([vertices[0], vertices[2], vertices[3]]);
 
-const vertexShaderSource = `
-  attribute vec4 coordinates;
-  uniform mat4 u_transform;
-  void main() {
-    gl_Position = u_transform * coordinates;
-  }
-`;
+  // Create a model that is composed of 4 triangles
+  var model = new SimpleModel("simple");
+  model.triangles = [ triangle1, triangle2, triangle3, triangle4 ];
 
-const fragmentShaderSource = `
-  precision mediump float;
-  void main() {
-    gl_FragColor = vec4(0.3, 0.3, 0.3, 1.0);
-  }
-`;
-
-const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-const program = createProgram(gl, vertexShader, fragmentShader);
-
-gl.useProgram(program);
-
-const vertices = new Float32Array([
-  0.0, -0.5, -0.5,
-  0.0,  0.5,  0.0,
-  0.5, -0.5,  0.5,
-  -0.5, -0.5,  0.5
-]);
-
-const indices = new Uint16Array([
-  2, 1, 3,
-  3, 1, 0,
-  0, 1, 2,
-  0, 2, 3
-]);
-
-const vertexBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-constindexBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-
-const coordinates = gl.getAttribLocation(program, 'coordinates');
-gl.vertexAttribPointer(coordinates, 3, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(coordinates);
-
-const transformUniformLocation = gl.getUniformLocation(program, 'u_transform');
-let rotationAngle = 0;
-
-function animate() {
-  rotationAngle += 0.01;
-  const transform = new Float32Array([
-    Math.cos(rotationAngle), 0, Math.sin(rotationAngle), 0,
-    0, 1, 0, 0,
-    -Math.sin(rotationAngle), 0, Math.cos(rotationAngle), 0,
-    0, 0, 0, 1
-  ]);
-
-  gl.uniformMatrix4fv(transformUniformLocation, false, transform);
-
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-  requestAnimationFrame(animate);
-}
-
-animate();
+  return model;
+};
 
