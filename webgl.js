@@ -1,80 +1,48 @@
-/**
- * simple_model_01.js, By Wayne Brown, Spring 2016
- */
+// Set up the scene, camera, and renderer
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-/**
- * The MIT License (MIT)
- *
- * Copyright (c) 2015 C. Wayne Brown
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+// Create a pyramid using a custom geometry
+const geometry = new THREE.Geometry();
+geometry.vertices.push(
+  new THREE.Vector3(0, 1, 0),
+  new THREE.Vector3(-1, -1, 1),
+  new THREE.Vector3(1, -1, 1),
+  new THREE.Vector3(1, -1, -1),
+  new THREE.Vector3(-1, -1, -1)
+);
+geometry.faces.push(
+  new THREE.Face3(0, 1, 2),
+  new THREE.Face3(0, 2, 3),
+  new THREE.Face3(0, 3, 4),
+  new THREE.Face3(0, 4, 1),
+  new THREE.Face3(1, 4, 3),
+  new THREE.Face3(1, 3, 2)
+);
 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+// Create a dark grey material
+const material = new THREE.MeshBasicMaterial({ color: 0x4B4B4B });
 
-"use strict";
+// Create the pyramid mesh and add it to the scene
+const pyramid = new THREE.Mesh(geometry, material);
+scene.add(pyramid);
 
-//-------------------------------------------------------------------------
-/**
- * A simple triangle composed of 3 vertices.
- * @param vertices Array An array of 3 vertices.
- * @constructor
-  */
-window.Triangle = function (vertices) {
-  var self = this;
-  self.vertices = vertices;
-};
+// Set the camera position
+camera.position.z = 5;
 
-//-------------------------------------------------------------------------
-/**
- * A simple model composed of an array of triangles.
- * @param name String The name of the model.
- * @constructor
- */
-window.SimpleModel = function (name) {
-  var self = this;
-  self.name = name;
-  self.triangles = [];
-};
+// Set up the animation loop
+function animate() {
+  requestAnimationFrame(animate);
 
-//-------------------------------------------------------------------------
-/**
- * Create a Simple_model of 4 triangles that forms a pyramid.
- * @return SimpleModel
- */
-window.CreatePyramid = function () {
-  var vertices, triangle1, triangle2, triangle3, triangle4;
+  // Rotate the pyramid
+  pyramid.rotation.x += 0.01;
+  pyramid.rotation.y += 0.01;
 
-  // Vertex data
-  vertices = [  [ 0.0, -0.25, -0.50],
-                [ 0.0,  0.25,  0.00],
-                [ 0.5, -0.25,  0.25],
-                [-0.5, -0.25,  0.25] ];
+  // Render the scene
+  renderer.render(scene, camera);
+}
 
-  // Create 4 triangles
-  triangle1 = new Triangle([vertices[2], vertices[1], vertices[3]]);
-  triangle2 = new Triangle([vertices[3], vertices[1], vertices[0]]);
-  triangle3 = new Triangle([vertices[0], vertices[1], vertices[2]]);
-  triangle4 = new Triangle([vertices[0], vertices[2], vertices[3]]);
-
-  // Create a model that is composed of 4 triangles
-  var model = new SimpleModel("simple");
-  model.triangles = [ triangle1, triangle2, triangle3, triangle4 ];
-
-  return model;
-};
-
+animate();
