@@ -9,12 +9,14 @@
             margin: 0;
             overflow: hidden;
             background-color: #8fd694; /* Pale green background */
+            position: relative;
         }
         canvas {
             display: block;
             position: absolute;
             top: 0;
             left: 0;
+            z-index: 1;
         }
         h1 {
             position: absolute;
@@ -25,6 +27,7 @@
             font-size: 2em;
             color: white;
             pointer-events: none;
+            z-index: 2;
         }
     </style>
 </head>
