@@ -8,9 +8,13 @@
         body {
             margin: 0;
             overflow: hidden;
+            background-color: #8fd694; /* Pale green background */
         }
         canvas {
             display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
         h1 {
             position: absolute;
@@ -20,6 +24,7 @@
             font-family: Arial, sans-serif;
             font-size: 2em;
             color: white;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -27,7 +32,7 @@
     <h1>NARRATIVE GOLDMINE</h1>
     <canvas id="webglCanvas"></canvas>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.js"></script>
     <script src="webgl.js"></script>
 </body>
 </html>
-

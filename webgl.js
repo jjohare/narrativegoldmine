@@ -1,6 +1,5 @@
 const canvas = document.getElementById('webglCanvas');
 const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
-renderer.setClearColor(0x8fd694); // Pale green background
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
@@ -30,3 +29,4 @@ function onWindowResize() {
 window.addEventListener('resize', onWindowResize, false);
 onWindowResize();
 animate();
+
