@@ -1,6 +1,14 @@
 const canvas = document.getElementById('webglCanvas');
 const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
 
+function setCanvasSize() {
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+}
+
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
 
@@ -20,13 +28,4 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-window.addEventListener('resize', onWindowResize, false);
-onWindowResize();
-animate();
-
+window.addEventListener('resize
