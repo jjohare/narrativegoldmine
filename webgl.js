@@ -6,23 +6,26 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Create a pyramid using a custom geometry
-const geometry = new THREE.Geometry();
-geometry.vertices.push(
-  new THREE.Vector3(0, 1, 0),
-  new THREE.Vector3(-1, -1, 1),
-  new THREE.Vector3(1, -1, 1),
-  new THREE.Vector3(1, -1, -1),
-  new THREE.Vector3(-1, -1, -1)
-);
-geometry.faces.push(
-  new THREE.Face3(0, 1, 2),
-  new THREE.Face3(0, 2, 3),
-  new THREE.Face3(0, 3, 4),
-  new THREE.Face3(0, 4, 1),
-  new THREE.Face3(1, 4, 3),
-  new THREE.Face3(1, 3, 2)
-);
+// Create a pyramid using a custom buffer geometry
+const geometry = new THREE.BufferGeometry();
+const vertices = new Float32Array([
+  0, 1, 0,
+  -1, -1, 1,
+  1, -1, 1,
+  1, -1, -1,
+  -1, -1, -1
+]);
+const indices = new Uint32Array([
+  0, 1, 2,
+  0, 2, 3,
+  0, 3, 4,
+  0, 4, 1,
+  1, 4, 3,
+  1, 3, 2
+]);
+
+geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+geometry.setIndex(new THREE.BufferAttribute(indices, 1));
 
 // Create a dark grey material
 const material = new THREE.MeshBasicMaterial({ color: 0x4B4B4B });
