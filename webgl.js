@@ -2,24 +2,33 @@ const canvas = document.getElementById('webgl-canvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const gl = canvas.getContext('webgl');
+const gl = canvas.getContext('webgl2');
+
+if (!gl) {
+  alert('WebGL 2 not supported by your browser');
+}
 
 gl.clearColor(0.5, 1.0, 0.5, 1.0);
-gl.clear(gl.COLOR_BUFFER_BIT);
+gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+gl.enable(gl.DEPTH_TEST);
 
 gl.viewport(0, 0, canvas.width, canvas.height);
 
 const vertexShaderSource = `
-  attribute vec4 coordinates;
+  #version 300 es
+  in vec4 coordinates;
+  uniform mat4 u_transform;
   void main() {
-    gl_Position = coordinates;
+    gl_Position = u_transform * coordinates;
   }
 `;
 
 const fragmentShaderSource = `
+  #version 300 es
   precision mediump float;
+  out vec4 fragColor;
   void main() {
-    gl_FragColor = vec4(0.3, 0.3, 0.3, 1.0);
+    fragColor = vec4(0.3, 0.3, 0.3, 1.0);
   }
 `;
 
@@ -64,10 +73,24 @@ const coordinates = gl.getAttribLocation(shaderProgram, 'coordinates');
 gl.vertexAttribPointer(coordinates, 3, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(coordinates);
 
+const transformUniformLocation = gl.getUniformLocation(shaderProgram, 'u_transform');
+let rotationAngle = 0;
+
 function animate() {
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  rotationAngle += 0.01;
+  const transform = new Float32Array([
+    Math.cos(rotationAngle), 0, Math.sin(rotationAngle), 0,
+    0, 1, 0, 0,
+    -Math.sin(rotationAngle), 0, Math.cos(rotationAngle), 0,
+    0, 0, 0, 1
+  ]);
+
+  gl.uniformMatrix4fv(transformUniformLocation, false, transform);
+
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
   requestAnimationFrame(animate);
 }
 
 animate();
+
