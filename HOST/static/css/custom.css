@@ -24,3 +24,7 @@ span.out {
   padding: 2px;
   white-space: pre-wrap;
 }
+iframe[id^=youtube-player] {
+    aspect-ratio: 16/9;
+    height: auto;
+}
