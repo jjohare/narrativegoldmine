@@ -1,0 +1,36 @@
+button.kit {
+  background: var(--ls-tertiary-background-color);
+  padding: 2px 4px 2px 4px;
+}
+button.out {
+  background: var(--ls-tertiary-background-color);
+  display: inline-table;
+  line-height: 12px;
+  margin: 0px 3px 0px 3px;
+  padding: 2px;
+}
+div.out button.out {
+    visibility: hidden;
+}
+div.out:hover button.out {
+    visibility: visible;
+}
+div.out {
+  font-size: 14px;
+}
+span.out {
+  display: inline-table;
+  font-size: 14px;
+  padding: 2px;
+  white-space: pre-wrap;
+}
+iframe[id^=youtube-player] {
+    aspect-ratio: 16/9;
+    height: auto;
+}
+/* Ensuring high specificity and important declarations */
+.mermaid, .mermaid * {
+    color: white !important; /* Change text color */
+    stroke: white !important; /* Change line color */
+    fill: black !important; /* Change fill color */
+}
